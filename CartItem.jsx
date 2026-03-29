@@ -5,17 +5,27 @@ function CartItem({ onContinueShopping, onCheckout }) {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
 
+  // Helper: strip "$" and convert to number
   const parsePrice = (cost) => parseFloat(cost.replace('$', ''));
 
-  const totalCost = cartItems.reduce(
-    (sum, item) => sum + parsePrice(item.cost) * item.quantity,
-    0
-  );
+  // Calculate cost for all units of one item type
+  const calculateTotalCostForItem = (item) => {
+    return parsePrice(item.cost) * item.quantity;
+  };
 
+  // Calculate the grand total of the entire cart
+  const calculateTotalAmount = () => {
+    return cartItems.reduce((total, item) => {
+      return total + calculateTotalCostForItem(item);
+    }, 0);
+  };
+
+  // Increment quantity for an item
   const handleIncrement = (item) => {
     dispatch(updateQuantity({ name: item.name, quantity: item.quantity + 1 }));
   };
 
+  // Decrement quantity — remove item if quantity reaches 0
   const handleDecrement = (item) => {
     if (item.quantity === 1) {
       dispatch(removeItem(item.name));
@@ -24,9 +34,12 @@ function CartItem({ onContinueShopping, onCheckout }) {
     }
   };
 
-  const handleDelete = (item) => {
+  // Delete item from cart entirely
+  const handleRemove = (item) => {
     dispatch(removeItem(item.name));
   };
+
+  const totalAmount = calculateTotalAmount();
 
   return (
     <div className="cart-page">
@@ -48,25 +61,34 @@ function CartItem({ onContinueShopping, onCheckout }) {
         </div>
       ) : (
         <>
+          {/* Individual cart item cards */}
           <div className="cart-items">
             {cartItems.map((item) => {
               const unitPrice = parsePrice(item.cost);
-              const subtotal = unitPrice * item.quantity;
+              const itemTotalCost = calculateTotalCostForItem(item);
+
               return (
                 <div key={item.name} className="cart-card">
+                  {/* Thumbnail */}
                   <img
                     src={item.image}
                     alt={item.name}
                     className="cart-item-img"
                   />
+
+                  {/* Name, unit cost, total cost for this item */}
                   <div className="cart-item-details">
                     <h4 className="cart-item-name">{item.name}</h4>
-                    <p className="cart-item-unit">Unit price: {item.cost}</p>
+                    <p className="cart-item-unit">
+                      Unit Price: <strong>${unitPrice.toFixed(2)}</strong>
+                    </p>
                     <p className="cart-item-subtotal">
-                      Total cost:{' '}
-                      <strong>${subtotal.toFixed(2)}</strong>
+                      Total Cost ({item.quantity} × ${unitPrice.toFixed(2)}):{' '}
+                      <strong className="item-total">${itemTotalCost.toFixed(2)}</strong>
                     </p>
                   </div>
+
+                  {/* Quantity controls + Delete */}
                   <div className="cart-item-controls">
                     <div className="qty-controls">
                       <button
@@ -87,7 +109,7 @@ function CartItem({ onContinueShopping, onCheckout }) {
                     </div>
                     <button
                       className="delete-btn"
-                      onClick={() => handleDelete(item)}
+                      onClick={() => handleRemove(item)}
                     >
                       🗑 Delete
                     </button>
@@ -97,19 +119,21 @@ function CartItem({ onContinueShopping, onCheckout }) {
             })}
           </div>
 
+          {/* Order summary with total cart amount */}
           <div className="cart-summary">
             <div className="summary-row">
               <span>Subtotal</span>
-              <span>${totalCost.toFixed(2)}</span>
+              <span>${totalAmount.toFixed(2)}</span>
             </div>
             <div className="summary-row">
               <span>Shipping</span>
               <span className="free-ship">Free 🌿</span>
             </div>
             <div className="summary-row total-row">
-              <span>Total Amount</span>
-              <span>${totalCost.toFixed(2)}</span>
+              <span>Total Cart Amount</span>
+              <span>${totalAmount.toFixed(2)}</span>
             </div>
+
             <div className="cart-actions">
               <button className="continue-btn" onClick={onContinueShopping}>
                 ← Continue Shopping
