@@ -45,9 +45,9 @@ function App() {
         </nav>
       )}
 
-      {/* Landing Page */}
+      {/* Landing Page — uses .background-image class */}
       {currentPage === 'landing' && (
-        <div className="landing">
+        <div className="landing background-image">
           <div className="landing-content">
             <div className="landing-badge">Est. 2024 · Lagos, Nigeria</div>
             <h1 className="landing-title">
@@ -55,9 +55,7 @@ function App() {
               <br />
               <span className="accent">Nursery</span>
             </h1>
-            <p className="landing-tagline">
-              Where every leaf tells a story
-            </p>
+            <p className="landing-tagline">Where every leaf tells a story</p>
             <p className="landing-desc">
               Discover hand-curated houseplants that breathe life, beauty,
               and calm into your space. From aromatic herbs to air-purifying
@@ -94,13 +92,8 @@ function App() {
           <div className="coming-soon-content">
             <span className="coming-soon-icon">🛍️</span>
             <h2>Coming Soon!</h2>
-            <p>
-              Our checkout experience is under construction. Check back soon!
-            </p>
-            <button
-              className="cta-btn"
-              onClick={() => setCurrentPage('products')}
-            >
+            <p>Our checkout experience is under construction. Check back soon!</p>
+            <button className="cta-btn" onClick={() => setCurrentPage('products')}>
               Continue Shopping
             </button>
           </div>
