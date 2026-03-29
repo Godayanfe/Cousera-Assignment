@@ -635,3 +635,11 @@ body {
   margin-bottom: 2rem;
   line-height: 1.6;
 }
+
+/* ── Dedicated background image class (required) ── */
+.background-image {
+  background-image: url('https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=1600&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
